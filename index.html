@@ -155,6 +155,7 @@
             background: #fff3cd;
             border-radius: 8px;
             border: 2px solid #ffc107;
+            text-align: center;
         }
 
         .no-sale-section h2 {
@@ -167,6 +168,8 @@
             flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 15px;
+            justify-content: center;
+            align-items: center;
         }
 
         .no-sale-inputs input {
@@ -181,6 +184,7 @@
             flex-wrap: wrap;
             gap: 10px;
             margin-top: 10px;
+            justify-content: center;
         }
 
         .no-sale-item {
@@ -305,11 +309,7 @@
                 </div>
                 <div class="form-group">
                     <label>Medio Día/Tarde</label>
-                    <select class="medio-input">
-                        <option value="">Seleccione</option>
-                        <option value="Mañana">Mañana</option>
-                        <option value="Tarde">Tarde</option>
-                    </select>
+                    <input type="text" class="medio-input" placeholder="Ej: Mañana, Tarde">
                 </div>
                 <div class="form-group">
                     <label>Conductor</label>
@@ -565,114 +565,90 @@
                 yPos += 8;
             });
             
-            // Sección "No Sale"
-            if (noSaleMachines.length > 0) {
-                // Aumentar espaciado después de la tabla
-                yPos += 20;
-                
-                // Verificar si necesitamos una nueva página
-                if (yPos + 30 > pageHeight - margin) {
-                    doc.addPage();
-                    yPos = margin + 10;
-                }
-                
-                // Título "NO SALE:" centrado
-                doc.setFont(undefined, 'bold');
-                doc.setFontSize(12);
-                doc.text('NO SALE:', pageWidth / 2, yPos, { align: 'center' });
-                yPos += 10;
-                
-                // Crear tabla centrada para las máquinas
-                const tableWidth = 80; // Ancho de la tabla
-                const cellWidth = tableWidth; // Una sola columna
-                const cellHeight = 8;
-                const startX = (pageWidth - tableWidth) / 2; // Centrar la tabla
-                
-                // Encabezado de la tabla
-                doc.setFont(undefined, 'bold');
-                doc.setFontSize(10);
-                doc.rect(startX, yPos, cellWidth, cellHeight);
-                doc.text('Máquina', startX + cellWidth / 2, yPos + 5, { align: 'center' });
-                yPos += cellHeight;
-                
-                // Filas con las máquinas
-                doc.setFont(undefined, 'normal');
-                noSaleMachines.forEach(maquina => {
-                    // Verificar si necesitamos una nueva página
-                    if (yPos + cellHeight > pageHeight - margin) {
-                        doc.addPage();
-                        yPos = margin + 10;
-                        
-                        // Redibujar encabezado en nueva página
-                        doc.setFont(undefined, 'bold');
-                        doc.rect(startX, yPos, cellWidth, cellHeight);
-                        doc.text('Máquina', startX + cellWidth / 2, yPos + 5, { align: 'center' });
-                        yPos += cellHeight;
-                        doc.setFont(undefined, 'normal');
-                    }
-                    
-                    doc.rect(startX, yPos, cellWidth, cellHeight);
-                    doc.text(maquina, startX + cellWidth / 2, yPos + 5, { align: 'center' });
-                    yPos += cellHeight;
-                });
+            // Secciones "No Sale" y "Avisos Del Día" lado a lado
+            yPos += 20;
+            
+            // Verificar si necesitamos una nueva página
+            if (yPos + 40 > pageHeight - margin) {
+                doc.addPage();
+                yPos = margin + 10;
             }
             
-            // Sección "Avisos Del Día"
+            // Configuración para tablas lado a lado
+            const tableWidthNoSale = 80;
+            const tableWidthAvisos = 80;
+            const gap = 10; // Espacio entre las dos tablas
+            const totalWidth = tableWidthNoSale + gap + tableWidthAvisos;
+            const startXBoth = (pageWidth - totalWidth) / 2; // Centrar ambas tablas
+            const startXNoSale = startXBoth;
+            const startXAvisos = startXBoth + tableWidthNoSale + gap;
+            const cellHeight = 8;
+            const startY = yPos;
+            
+            // Título "NO SALE:"
+            doc.setFont(undefined, 'bold');
+            doc.setFontSize(12);
+            doc.text('NO SALE:', startXNoSale + tableWidthNoSale / 2, yPos, { align: 'center' });
+            yPos += 10;
+            
+            // Encabezado tabla "No Sale"
+            doc.setFont(undefined, 'bold');
+            doc.setFontSize(10);
+            doc.rect(startXNoSale, yPos, tableWidthNoSale, cellHeight);
+            doc.text('Máquina', startXNoSale + tableWidthNoSale / 2, yPos + 5, { align: 'center' });
+            let currentYNoSale = yPos + cellHeight;
+            
+            // Filas con las máquinas o mensaje "Sin máquinas"
+            doc.setFont(undefined, 'normal');
+            if (noSaleMachines.length > 0) {
+                noSaleMachines.forEach(maquina => {
+                    doc.rect(startXNoSale, currentYNoSale, tableWidthNoSale, cellHeight);
+                    doc.text(maquina, startXNoSale + tableWidthNoSale / 2, currentYNoSale + 5, { align: 'center' });
+                    currentYNoSale += cellHeight;
+                });
+            } else {
+                doc.rect(startXNoSale, currentYNoSale, tableWidthNoSale, cellHeight);
+                doc.text('Sin máquinas', startXNoSale + tableWidthNoSale / 2, currentYNoSale + 5, { align: 'center' });
+                currentYNoSale += cellHeight;
+            }
+            
+            // Resetear Y para la segunda tabla
+            yPos = startY;
+            
+            // Título "AVISOS DEL DÍA:"
+            doc.setFont(undefined, 'bold');
+            doc.setFontSize(12);
+            doc.text('AVISOS DEL DÍA:', startXAvisos + tableWidthAvisos / 2, yPos, { align: 'center' });
+            yPos += 10;
+            
+            // Encabezado tabla "Avisos"
+            doc.setFont(undefined, 'bold');
+            doc.setFontSize(10);
+            doc.rect(startXAvisos, yPos, tableWidthAvisos, cellHeight);
+            doc.text('Aviso', startXAvisos + tableWidthAvisos / 2, yPos + 5, { align: 'center' });
+            let currentYAvisos = yPos + cellHeight;
+            
+            // Filas con los avisos o mensaje "Sin avisos del día"
+            doc.setFont(undefined, 'normal');
             if (avisosDelDia.length > 0) {
-                // Aumentar espaciado después de la sección anterior
-                yPos += 20;
-                
-                // Verificar si necesitamos una nueva página
-                if (yPos + 30 > pageHeight - margin) {
-                    doc.addPage();
-                    yPos = margin + 10;
-                }
-                
-                // Título "AVISOS DEL DÍA:" centrado
-                doc.setFont(undefined, 'bold');
-                doc.setFontSize(12);
-                doc.text('AVISOS DEL DÍA:', pageWidth / 2, yPos, { align: 'center' });
-                yPos += 10;
-                
-                // Crear tabla centrada para los avisos
-                const tableWidth = 120; // Ancho de la tabla (más ancho para avisos)
-                const cellWidth = tableWidth; // Una sola columna
-                const cellHeight = 8;
-                const startXAvisos = (pageWidth - tableWidth) / 2; // Centrar la tabla
-                
-                // Encabezado de la tabla
-                doc.setFont(undefined, 'bold');
-                doc.setFontSize(10);
-                doc.rect(startXAvisos, yPos, cellWidth, cellHeight);
-                doc.text('Aviso', startXAvisos + cellWidth / 2, yPos + 5, { align: 'center' });
-                yPos += cellHeight;
-                
-                // Filas con los avisos
-                doc.setFont(undefined, 'normal');
                 avisosDelDia.forEach(aviso => {
-                    // Verificar si necesitamos una nueva página
-                    if (yPos + cellHeight > pageHeight - margin) {
-                        doc.addPage();
-                        yPos = margin + 10;
-                        
-                        // Redibujar encabezado en nueva página
-                        doc.setFont(undefined, 'bold');
-                        doc.rect(startXAvisos, yPos, cellWidth, cellHeight);
-                        doc.text('Aviso', startXAvisos + cellWidth / 2, yPos + 5, { align: 'center' });
-                        yPos += cellHeight;
-                        doc.setFont(undefined, 'normal');
-                    }
-                    
-                    doc.rect(startXAvisos, yPos, cellWidth, cellHeight);
+                    doc.rect(startXAvisos, currentYAvisos, tableWidthAvisos, cellHeight);
                     // Truncar texto si es muy largo
                     let avisoText = aviso;
-                    if (avisoText.length > 35) {
-                        avisoText = avisoText.substring(0, 32) + '...';
+                    if (avisoText.length > 20) {
+                        avisoText = avisoText.substring(0, 17) + '...';
                     }
-                    doc.text(avisoText, startXAvisos + cellWidth / 2, yPos + 5, { align: 'center' });
-                    yPos += cellHeight;
+                    doc.text(avisoText, startXAvisos + tableWidthAvisos / 2, currentYAvisos + 5, { align: 'center' });
+                    currentYAvisos += cellHeight;
                 });
+            } else {
+                doc.rect(startXAvisos, currentYAvisos, tableWidthAvisos, cellHeight);
+                doc.text('Sin avisos del día', startXAvisos + tableWidthAvisos / 2, currentYAvisos + 5, { align: 'center' });
+                currentYAvisos += cellHeight;
             }
+            
+            // Actualizar yPos al máximo de las dos tablas
+            yPos = Math.max(currentYNoSale, currentYAvisos);
             
             // Guardar PDF
             doc.save('planilla-nahuelbus.pdf');
