@@ -1,11 +1,682 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nahuelbus</title>
+    <title>Nahuelbus - Planilla de Horarios</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 2fr 1.5fr 1.5fr auto auto auto;
+            gap: 15px;
+            align-items: end;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.9em;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 10px;
+            border: 2px solid #dee2e6;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-add {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-add:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-remove {
+            background: #dc3545;
+            color: white;
+            padding: 10px 15px;
+        }
+
+        .btn-remove:hover {
+            background: #c82333;
+        }
+
+        .btn-move {
+            background: #6c757d;
+            color: white;
+            padding: 10px 12px;
+            font-size: 0.9em;
+        }
+
+        .btn-move:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn-move:disabled {
+            background: #adb5bd;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .move-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .btn-download {
+            background: #007bff;
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            display: block;
+            margin: 30px auto;
+        }
+
+        .btn-download:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .no-sale-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #fff3cd;
+            border-radius: 8px;
+            border: 2px solid #ffc107;
+        }
+
+        .no-sale-section h2 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .no-sale-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .no-sale-inputs input {
+            padding: 8px;
+            border: 2px solid #ffc107;
+            border-radius: 5px;
+            width: 150px;
+        }
+
+        .no-sale-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .no-sale-item {
+            background: #ffc107;
+            color: #856404;
+            padding: 8px 15px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .no-sale-item .remove {
+            background: #856404;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .add-row-btn {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .btn-add-row {
+            background: #17a2b8;
+            color: white;
+            padding: 12px 25px;
+        }
+
+        .btn-add-row:hover {
+            background: #138496;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .move-buttons {
+                flex-direction: row;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Nahuelbus</h1>
+    <div class="container">
+        <h1>🚌 Nahuelbus - Planilla de Horarios</h1>
+
+        <div class="form-section">
+            <div id="form-rows">
+                <!-- Las filas se agregarán dinámicamente aquí -->
+            </div>
+            <div class="add-row-btn">
+                <button class="btn btn-add-row" onclick="addFormRow()">+ Agregar Fila</button>
+            </div>
+        </div>
+
+        <div class="no-sale-section">
+            <h2>🚫 No Sale</h2>
+            <div class="no-sale-inputs">
+                <input type="text" id="no-sale-input" placeholder="Ingrese número de máquina" onkeypress="handleNoSaleKeyPress(event)">
+                <button class="btn btn-add" onclick="addNoSale()">Agregar</button>
+            </div>
+            <div class="no-sale-list" id="no-sale-list">
+                <!-- Las máquinas que no salen se mostrarán aquí -->
+            </div>
+        </div>
+
+        <div class="no-sale-section" style="background: #d1ecf1; border-color: #0c5460;">
+            <h2 style="color: #0c5460;">📢 Avisos Del Día</h2>
+            <div class="no-sale-inputs">
+                <input type="text" id="aviso-input" placeholder="Ingrese aviso del día" onkeypress="handleAvisoKeyPress(event)">
+                <button class="btn btn-add" onclick="addAviso()">Agregar</button>
+            </div>
+            <div class="no-sale-list" id="aviso-list">
+                <!-- Los avisos se mostrarán aquí -->
+            </div>
+        </div>
+
+        <button class="btn btn-download" onclick="downloadPDF()">📥 Descargar PDF</button>
+    </div>
+
+    <script>
+        let formRowCount = 0;
+        let noSaleMachines = [];
+        let avisosDelDia = [];
+
+        // Agregar primera fila al cargar
+        window.onload = function() {
+            addFormRow();
+            updateMoveButtons();
+        };
+
+        function addFormRow() {
+            formRowCount++;
+            const formRows = document.getElementById('form-rows');
+            const row = document.createElement('div');
+            row.className = 'form-row';
+            row.id = `row-${formRowCount}`;
+            
+            row.innerHTML = `
+                <div class="form-group">
+                    <label>Máquina</label>
+                    <input type="text" class="maquina-input" placeholder="Ej: 101">
+                </div>
+                <div class="form-group">
+                    <label>Hora</label>
+                    <input type="time" class="hora-input">
+                </div>
+                <div class="form-group">
+                    <label>Destino</label>
+                    <input type="text" class="destino-input" placeholder="Ej: Bariloche">
+                </div>
+                <div class="form-group">
+                    <label>Medio Día/Tarde</label>
+                    <select class="medio-input">
+                        <option value="">Seleccione</option>
+                        <option value="Mañana">Mañana</option>
+                        <option value="Tarde">Tarde</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Conductor</label>
+                    <input type="text" class="conductor-input" placeholder="Nombre del conductor">
+                </div>
+                <div class="move-buttons">
+                    <button class="btn btn-move" onclick="moveRowUp(${formRowCount})" title="Mover arriba">↑</button>
+                    <button class="btn btn-move" onclick="moveRowDown(${formRowCount})" title="Mover abajo">↓</button>
+                </div>
+                <button class="btn btn-remove" onclick="removeRow(${formRowCount})">✕</button>
+            `;
+            
+            formRows.appendChild(row);
+            updateMoveButtons();
+        }
+
+        function removeRow(rowId) {
+            const row = document.getElementById(`row-${rowId}`);
+            if (row) {
+                row.remove();
+                updateMoveButtons();
+            }
+        }
+
+        function moveRowUp(rowId) {
+            const row = document.getElementById(`row-${rowId}`);
+            if (!row) return;
+            
+            const previousRow = row.previousElementSibling;
+            if (previousRow && previousRow.classList.contains('form-row')) {
+                row.parentNode.insertBefore(row, previousRow);
+                updateMoveButtons();
+            }
+        }
+
+        function moveRowDown(rowId) {
+            const row = document.getElementById(`row-${rowId}`);
+            if (!row) return;
+            
+            const nextRow = row.nextElementSibling;
+            if (nextRow && nextRow.classList.contains('form-row')) {
+                row.parentNode.insertBefore(nextRow, row);
+                updateMoveButtons();
+            }
+        }
+
+        function updateMoveButtons() {
+            const rows = document.querySelectorAll('.form-row');
+            rows.forEach((row, index) => {
+                const moveButtons = row.querySelectorAll('.btn-move');
+                if (moveButtons.length >= 2) {
+                    // Botón de arriba
+                    const upButton = moveButtons[0];
+                    // Botón de abajo
+                    const downButton = moveButtons[1];
+                    
+                    // Deshabilitar botón arriba en la primera fila
+                    if (index === 0) {
+                        upButton.disabled = true;
+                    } else {
+                        upButton.disabled = false;
+                    }
+                    
+                    // Deshabilitar botón abajo en la última fila
+                    if (index === rows.length - 1) {
+                        downButton.disabled = true;
+                    } else {
+                        downButton.disabled = false;
+                    }
+                }
+            });
+        }
+
+        function addNoSale() {
+            const input = document.getElementById('no-sale-input');
+            const maquina = input.value.trim();
+            
+            if (maquina && !noSaleMachines.includes(maquina)) {
+                noSaleMachines.push(maquina);
+                input.value = '';
+                updateNoSaleList();
+            }
+        }
+
+        function handleNoSaleKeyPress(event) {
+            if (event.key === 'Enter') {
+                addNoSale();
+            }
+        }
+
+        function removeNoSale(maquina) {
+            noSaleMachines = noSaleMachines.filter(m => m !== maquina);
+            updateNoSaleList();
+        }
+
+        function updateNoSaleList() {
+            const list = document.getElementById('no-sale-list');
+            list.innerHTML = '';
+            
+            noSaleMachines.forEach(maquina => {
+                const item = document.createElement('div');
+                item.className = 'no-sale-item';
+                item.innerHTML = `
+                    ${maquina}
+                    <button class="remove" onclick="removeNoSale('${maquina}')">✕</button>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function addAviso() {
+            const input = document.getElementById('aviso-input');
+            const aviso = input.value.trim();
+            
+            if (aviso && !avisosDelDia.includes(aviso)) {
+                avisosDelDia.push(aviso);
+                input.value = '';
+                updateAvisosList();
+            }
+        }
+
+        function handleAvisoKeyPress(event) {
+            if (event.key === 'Enter') {
+                addAviso();
+            }
+        }
+
+        function removeAviso(aviso) {
+            avisosDelDia = avisosDelDia.filter(a => a !== aviso);
+            updateAvisosList();
+        }
+
+        function updateAvisosList() {
+            const list = document.getElementById('aviso-list');
+            list.innerHTML = '';
+            
+            avisosDelDia.forEach(aviso => {
+                const item = document.createElement('div');
+                item.className = 'no-sale-item';
+                item.innerHTML = `
+                    ${aviso}
+                    <button class="remove" onclick="removeAviso('${aviso}')">✕</button>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function getAllFormData() {
+            const rows = document.querySelectorAll('.form-row');
+            const data = [];
+            
+            rows.forEach(row => {
+                const maquina = row.querySelector('.maquina-input')?.value.trim();
+                const hora = row.querySelector('.hora-input')?.value;
+                const destino = row.querySelector('.destino-input')?.value.trim();
+                const medio = row.querySelector('.medio-input')?.value;
+                const conductor = row.querySelector('.conductor-input')?.value.trim();
+                
+                if (maquina || hora || destino || medio || conductor) {
+                    data.push({
+                        maquina: maquina || '',
+                        hora: hora || '',
+                        destino: destino || '',
+                        medio: medio || '',
+                        conductor: conductor || ''
+                    });
+                }
+            });
+            
+            return data;
+        }
+
+        function formatTime(timeString) {
+            if (!timeString) return '';
+            const [hours, minutes] = timeString.split(':');
+            return `${hours}:${minutes}`;
+        }
+
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const formData = getAllFormData();
+            
+            // Configuración de la página
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const pageHeight = doc.internal.pageSize.getHeight();
+            const margin = 15;
+            let yPos = margin + 10;
+            
+            // Título
+            doc.setFontSize(18);
+            doc.setFont(undefined, 'bold');
+            doc.text('NAHUELBUS - PLANILLA DE HORARIOS', pageWidth / 2, yPos, { align: 'center' });
+            yPos += 15;
+            
+            // Encabezados de la tabla
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'bold');
+            const colWidths = [25, 25, 60, 35, 40];
+            const headers = ['Máq.', 'Hora', 'Destino', 'Medio', 'Conductor'];
+            const startX = margin;
+            
+            // Dibujar encabezados
+            let xPos = startX;
+            headers.forEach((header, index) => {
+                doc.rect(xPos, yPos, colWidths[index], 8);
+                doc.text(header, xPos + colWidths[index] / 2, yPos + 5, { align: 'center' });
+                xPos += colWidths[index];
+            });
+            yPos += 8;
+            
+            // Datos de la tabla
+            doc.setFont(undefined, 'normal');
+            formData.forEach((row, index) => {
+                // Verificar si necesitamos una nueva página
+                if (yPos + 8 > pageHeight - margin) {
+                    doc.addPage();
+                    yPos = margin + 10;
+                    
+                    // Redibujar encabezados en nueva página
+                    xPos = startX;
+                    headers.forEach((header, hIndex) => {
+                        doc.setFont(undefined, 'bold');
+                        doc.rect(xPos, yPos, colWidths[hIndex], 8);
+                        doc.text(header, xPos + colWidths[hIndex] / 2, yPos + 5, { align: 'center' });
+                        xPos += colWidths[hIndex];
+                    });
+                    yPos += 8;
+                    doc.setFont(undefined, 'normal');
+                }
+                
+                xPos = startX;
+                const values = [
+                    row.maquina,
+                    formatTime(row.hora),
+                    row.destino,
+                    row.medio,
+                    row.conductor
+                ];
+                
+                values.forEach((value, vIndex) => {
+                    doc.rect(xPos, yPos, colWidths[vIndex], 8);
+                    // Truncar texto si es muy largo
+                    let text = value || '';
+                    if (vIndex === 2 && text.length > 20) {
+                        text = text.substring(0, 17) + '...';
+                    }
+                    doc.text(text, xPos + 2, yPos + 5);
+                    xPos += colWidths[vIndex];
+                });
+                
+                yPos += 8;
+            });
+            
+            // Sección "No Sale"
+            if (noSaleMachines.length > 0) {
+                // Aumentar espaciado después de la tabla
+                yPos += 20;
+                
+                // Verificar si necesitamos una nueva página
+                if (yPos + 30 > pageHeight - margin) {
+                    doc.addPage();
+                    yPos = margin + 10;
+                }
+                
+                // Título "NO SALE:" centrado
+                doc.setFont(undefined, 'bold');
+                doc.setFontSize(12);
+                doc.text('NO SALE:', pageWidth / 2, yPos, { align: 'center' });
+                yPos += 10;
+                
+                // Crear tabla centrada para las máquinas
+                const tableWidth = 80; // Ancho de la tabla
+                const cellWidth = tableWidth; // Una sola columna
+                const cellHeight = 8;
+                const startX = (pageWidth - tableWidth) / 2; // Centrar la tabla
+                
+                // Encabezado de la tabla
+                doc.setFont(undefined, 'bold');
+                doc.setFontSize(10);
+                doc.rect(startX, yPos, cellWidth, cellHeight);
+                doc.text('Máquina', startX + cellWidth / 2, yPos + 5, { align: 'center' });
+                yPos += cellHeight;
+                
+                // Filas con las máquinas
+                doc.setFont(undefined, 'normal');
+                noSaleMachines.forEach(maquina => {
+                    // Verificar si necesitamos una nueva página
+                    if (yPos + cellHeight > pageHeight - margin) {
+                        doc.addPage();
+                        yPos = margin + 10;
+                        
+                        // Redibujar encabezado en nueva página
+                        doc.setFont(undefined, 'bold');
+                        doc.rect(startX, yPos, cellWidth, cellHeight);
+                        doc.text('Máquina', startX + cellWidth / 2, yPos + 5, { align: 'center' });
+                        yPos += cellHeight;
+                        doc.setFont(undefined, 'normal');
+                    }
+                    
+                    doc.rect(startX, yPos, cellWidth, cellHeight);
+                    doc.text(maquina, startX + cellWidth / 2, yPos + 5, { align: 'center' });
+                    yPos += cellHeight;
+                });
+            }
+            
+            // Sección "Avisos Del Día"
+            if (avisosDelDia.length > 0) {
+                // Aumentar espaciado después de la sección anterior
+                yPos += 20;
+                
+                // Verificar si necesitamos una nueva página
+                if (yPos + 30 > pageHeight - margin) {
+                    doc.addPage();
+                    yPos = margin + 10;
+                }
+                
+                // Título "AVISOS DEL DÍA:" centrado
+                doc.setFont(undefined, 'bold');
+                doc.setFontSize(12);
+                doc.text('AVISOS DEL DÍA:', pageWidth / 2, yPos, { align: 'center' });
+                yPos += 10;
+                
+                // Crear tabla centrada para los avisos
+                const tableWidth = 120; // Ancho de la tabla (más ancho para avisos)
+                const cellWidth = tableWidth; // Una sola columna
+                const cellHeight = 8;
+                const startXAvisos = (pageWidth - tableWidth) / 2; // Centrar la tabla
+                
+                // Encabezado de la tabla
+                doc.setFont(undefined, 'bold');
+                doc.setFontSize(10);
+                doc.rect(startXAvisos, yPos, cellWidth, cellHeight);
+                doc.text('Aviso', startXAvisos + cellWidth / 2, yPos + 5, { align: 'center' });
+                yPos += cellHeight;
+                
+                // Filas con los avisos
+                doc.setFont(undefined, 'normal');
+                avisosDelDia.forEach(aviso => {
+                    // Verificar si necesitamos una nueva página
+                    if (yPos + cellHeight > pageHeight - margin) {
+                        doc.addPage();
+                        yPos = margin + 10;
+                        
+                        // Redibujar encabezado en nueva página
+                        doc.setFont(undefined, 'bold');
+                        doc.rect(startXAvisos, yPos, cellWidth, cellHeight);
+                        doc.text('Aviso', startXAvisos + cellWidth / 2, yPos + 5, { align: 'center' });
+                        yPos += cellHeight;
+                        doc.setFont(undefined, 'normal');
+                    }
+                    
+                    doc.rect(startXAvisos, yPos, cellWidth, cellHeight);
+                    // Truncar texto si es muy largo
+                    let avisoText = aviso;
+                    if (avisoText.length > 35) {
+                        avisoText = avisoText.substring(0, 32) + '...';
+                    }
+                    doc.text(avisoText, startXAvisos + cellWidth / 2, yPos + 5, { align: 'center' });
+                    yPos += cellHeight;
+                });
+            }
+            
+            // Guardar PDF
+            doc.save('planilla-nahuelbus.pdf');
+        }
+    </script>
 </body>
 </html>
