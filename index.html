@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nahuelbus - Planilla de Horarios</title>
+    <title>ROTATIVA</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * {
@@ -405,7 +405,11 @@
 </head>
 <body>
     <div class="container">
-        <h1>🚌 Nahuelbus - Planilla de Horarios</h1>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px;">
+            <img src="icono_nahuelbus.jpeg" alt="Nahuelbus Logo" style="max-width: 80px; height: auto;">
+            <h1 style="margin: 0;">ROTATIVA</h1>
+            <div id="fecha-actual" style="font-size: 1.1em; color: #495057; font-weight: 600;"></div>
+        </div>
 
         <div class="form-section">
             <div id="form-rows">
@@ -446,10 +450,23 @@
         let noSaleMachines = [];
         let avisosDelDia = [];
 
+        // Función para formatear la fecha
+        function formatearFecha() {
+            const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 
+                          'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+            const fecha = new Date();
+            const dia = fecha.getDate();
+            const mes = meses[fecha.getMonth()];
+            const año = fecha.getFullYear();
+            return `${dia} de ${mes} de ${año}`;
+        }
+
         // Agregar primera fila al cargar
         window.onload = function() {
             addFormRow();
             updateMoveButtons();
+            // Mostrar fecha actual
+            document.getElementById('fecha-actual').textContent = formatearFecha();
         };
 
         function addFormRow() {
@@ -462,7 +479,13 @@
             row.innerHTML = `
                 <div class="form-group">
                     <label>Máquina</label>
-                    <input type="text" class="maquina-input" placeholder="Ej: 101">
+                    <select class="maquina-input">
+                        <option value="">Seleccione</option>
+                        <option value="33">33</option>
+                        <option value="31">31</option>
+                        <option value="28">28</option>
+                        <option value="54">54</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label>Hora</label>
@@ -470,7 +493,14 @@
                 </div>
                 <div class="form-group">
                     <label>Destino</label>
-                    <input type="text" class="destino-input" placeholder="Ej: Bariloche">
+                    <select class="destino-input">
+                        <option value="">Seleccione</option>
+                        <option value="Lebu">Lebu</option>
+                        <option value="Los Alamos">Los Alamos</option>
+                        <option value="Cañete">Cañete</option>
+                        <option value="Arauco">Arauco</option>
+                        <option value="Curanilahue">Curanilahue</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label>Medio Día/Tarde</label>
@@ -478,7 +508,13 @@
                 </div>
                 <div class="form-group">
                     <label>Conductor</label>
-                    <input type="text" class="conductor-input" placeholder="Nombre del conductor">
+                    <select class="conductor-input">
+                        <option value="">Seleccione</option>
+                        <option value="Juan Oñate">Juan Oñate</option>
+                        <option value="Erica Lagos">Erica Lagos</option>
+                        <option value="Carlos Peña">Carlos Peña</option>
+                        <option value="Guido Colileo">Guido Colileo</option>
+                    </select>
                 </div>
                 <div class="move-buttons">
                     <button class="btn btn-move" onclick="moveRowUp(${formRowCount})" title="Mover arriba">↑</button>
@@ -662,21 +698,100 @@
             // Configuración de la página
             const pageWidth = doc.internal.pageSize.getWidth();
             const pageHeight = doc.internal.pageSize.getHeight();
-            const margin = 15;
-            let yPos = margin + 10;
+            const margin = 2;
+            let yPos = margin;
             
-            // Título
-            doc.setFontSize(18);
-            doc.setFont(undefined, 'bold');
-            doc.text('NAHUELBUS - PLANILLA DE HORARIOS', pageWidth / 2, yPos, { align: 'center' });
-            yPos += 15;
+            // Cargar y agregar el logo
+            const img = new Image();
+            img.src = 'icono_nahuelbus.jpeg';
+            
+            img.onload = function() {
+                // Agregar logo al PDF a la izquierda
+                const logoWidth = 30;
+                const logoHeight = (img.height / img.width) * logoWidth;
+                const logoX = margin;
+                const logoY = yPos;
+                doc.addImage(img, 'JPEG', logoX, logoY, logoWidth, logoHeight);
+                
+                // Título a la derecha del logo
+                const titleX = logoX + logoWidth + 10;
+                const titleY = logoY + logoHeight / 2 + 3; // Centrar verticalmente con el logo
+                
+                // Fecha actual
+                const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 
+                              'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+                const fecha = new Date();
+                const dia = fecha.getDate();
+                const mes = meses[fecha.getMonth()];
+                const año = fecha.getFullYear();
+                const fechaTexto = `${dia} de ${mes} de ${año}`;
+                
+                // Escribir "ROTATIVA" y la fecha en la misma línea
+                doc.setFontSize(18);
+                doc.setFont(undefined, 'bold');
+                doc.text('ROTATIVA', titleX, titleY);
+                
+                // Calcular ancho del texto "ROTATIVA" para posicionar la fecha
+                const rotativaWidth = doc.getTextWidth('ROTATIVA');
+                
+                // Ajustar posición Y para alinear la fecha con "ROTATIVA" (compensar diferencia de tamaño de fuente)
+                doc.setFontSize(12);
+                doc.setFont(undefined, 'normal');
+                // Ajustar Y para que la línea base sea la misma (18px vs 12px, diferencia de ~3px en línea base)
+                const fechaY = titleY - (18 - 12) * 0.3; // Ajuste fino para alineación
+                doc.text(fechaTexto, titleX + rotativaWidth + 10, fechaY);
+                
+                // Ajustar yPos para el contenido siguiente
+                yPos += Math.max(logoHeight, 20) + 10;
+                
+                generatePDFContent(doc, formData, pageWidth, pageHeight, margin, yPos);
+            };
+            
+            img.onerror = function() {
+                // Si la imagen no carga, continuar sin ella
+                const titleX = margin;
+                
+                // Fecha actual
+                const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 
+                              'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+                const fecha = new Date();
+                const dia = fecha.getDate();
+                const mes = meses[fecha.getMonth()];
+                const año = fecha.getFullYear();
+                const fechaTexto = `${dia} de ${mes} de ${año}`;
+                
+                // Escribir "ROTATIVA" y la fecha en la misma línea
+                doc.setFontSize(18);
+                doc.setFont(undefined, 'bold');
+                doc.text('ROTATIVA', titleX, yPos);
+                
+                // Calcular ancho del texto "ROTATIVA" para posicionar la fecha
+                const rotativaWidth = doc.getTextWidth('ROTATIVA');
+                
+                // Ajustar posición Y para alinear la fecha con "ROTATIVA"
+                doc.setFontSize(12);
+                doc.setFont(undefined, 'normal');
+                // Ajustar Y para que la línea base sea la misma
+                const fechaY = yPos - (18 - 12) * 0.3; // Ajuste fino para alineación
+                doc.text(fechaTexto, titleX + rotativaWidth + 10, fechaY);
+                
+                yPos += 20;
+                
+                generatePDFContent(doc, formData, pageWidth, pageHeight, margin, yPos);
+            };
+        }
+        
+        function generatePDFContent(doc, formData, pageWidth, pageHeight, margin, yPos) {
             
             // Encabezados de la tabla
             doc.setFontSize(10);
             doc.setFont(undefined, 'bold');
             const colWidths = [25, 25, 60, 50, 40];
-            const headers = ['Máq.', 'Hora', 'Destino', 'Medio Día/ Tarde', 'Conductor'];
-            const startX = margin;
+            const headers = ['Máq.', 'Hora', 'Destino', 'Medio Día/Tarde', 'Conductor'];
+            // Calcular ancho total de la tabla
+            const totalTableWidth = colWidths.reduce((sum, width) => sum + width, 0);
+            // Centrar la tabla con márgenes iguales
+            const startX = (pageWidth - totalTableWidth) / 2;
             
             // Dibujar encabezados
             let xPos = startX;
@@ -742,7 +857,7 @@
             // Configuración para tablas lado a lado
             const tableWidthNoSale = 80;
             const tableWidthAvisos = 80;
-            const gap = 10; // Espacio entre las dos tablas
+            const gap = 15; // Espacio entre las dos tablas
             const totalWidth = tableWidthNoSale + gap + tableWidthAvisos;
             const startXBoth = (pageWidth - totalWidth) / 2; // Centrar ambas tablas
             const startXNoSale = startXBoth;
