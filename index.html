@@ -405,10 +405,16 @@
 </head>
 <body>
     <div class="container">
-        <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
             <img src="icono_nahuelbus.jpeg" alt="Nahuelbus Logo" style="max-width: 80px; height: auto;">
             <h1 style="margin: 0;">ROTATIVA</h1>
-            <div id="fecha-actual" style="font-size: 1.1em; color: #495057; font-weight: 600;"></div>
+            <div style="display: flex; align-items: center; gap: 5px;">
+                <select id="fecha-dia" style="padding: 5px; border: 2px solid #dee2e6; border-radius: 5px; font-size: 0.9em;" onchange="actualizarFecha()"></select>
+                <span style="font-size: 1.1em; color: #495057; font-weight: 600;">de</span>
+                <select id="fecha-mes" style="padding: 5px; border: 2px solid #dee2e6; border-radius: 5px; font-size: 0.9em;" onchange="actualizarFecha()"></select>
+                <span style="font-size: 1.1em; color: #495057; font-weight: 600;">de</span>
+                <select id="fecha-año" style="padding: 5px; border: 2px solid #dee2e6; border-radius: 5px; font-size: 0.9em;" onchange="actualizarFecha()"></select>
+            </div>
         </div>
 
         <div class="form-section">
@@ -450,23 +456,70 @@
         let noSaleMachines = [];
         let avisosDelDia = [];
 
-        // Función para formatear la fecha
-        function formatearFecha() {
+        // Función para obtener la fecha seleccionada
+        function obtenerFechaSeleccionada() {
+            const dia = document.getElementById('fecha-dia').value;
+            const mes = document.getElementById('fecha-mes').value;
+            const año = document.getElementById('fecha-año').value;
+            if (dia && mes && año) {
+                return `${dia} de ${mes} de ${año}`;
+            }
+            return '';
+        }
+
+        // Función para actualizar la fecha (se usa cuando cambian los selects)
+        function actualizarFecha() {
+            // La fecha se muestra directamente en los selects, no necesitamos actualizar nada
+        }
+
+        // Función para inicializar los selects de fecha
+        function inicializarFecha() {
             const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 
                           'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
             const fecha = new Date();
-            const dia = fecha.getDate();
-            const mes = meses[fecha.getMonth()];
-            const año = fecha.getFullYear();
-            return `${dia} de ${mes} de ${año}`;
+            const diaActual = fecha.getDate();
+            const mesActual = fecha.getMonth();
+            const añoActual = fecha.getFullYear();
+            
+            // Llenar días (1-31)
+            const selectDia = document.getElementById('fecha-dia');
+            selectDia.innerHTML = '<option value="">Día</option>';
+            for (let i = 1; i <= 31; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                if (i === diaActual) option.selected = true;
+                selectDia.appendChild(option);
+            }
+            
+            // Llenar meses
+            const selectMes = document.getElementById('fecha-mes');
+            selectMes.innerHTML = '<option value="">Mes</option>';
+            meses.forEach((mes, index) => {
+                const option = document.createElement('option');
+                option.value = mes;
+                option.textContent = mes;
+                if (index === mesActual) option.selected = true;
+                selectMes.appendChild(option);
+            });
+            
+            // Llenar años (año actual y algunos años siguientes)
+            const selectAño = document.getElementById('fecha-año');
+            selectAño.innerHTML = '<option value="">Año</option>';
+            for (let i = añoActual; i <= añoActual + 5; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                if (i === añoActual) option.selected = true;
+                selectAño.appendChild(option);
+            }
         }
 
         // Agregar primera fila al cargar
         window.onload = function() {
+            inicializarFecha();
             addFormRow();
             updateMoveButtons();
-            // Mostrar fecha actual
-            document.getElementById('fecha-actual').textContent = formatearFecha();
         };
 
         function addFormRow() {
@@ -717,14 +770,8 @@
                 const titleX = logoX + logoWidth + 10;
                 const titleY = logoY + logoHeight / 2 + 3; // Centrar verticalmente con el logo
                 
-                // Fecha actual
-                const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 
-                              'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-                const fecha = new Date();
-                const dia = fecha.getDate();
-                const mes = meses[fecha.getMonth()];
-                const año = fecha.getFullYear();
-                const fechaTexto = `${dia} de ${mes} de ${año}`;
+                // Obtener fecha seleccionada
+                const fechaTexto = obtenerFechaSeleccionada();
                 
                 // Escribir "ROTATIVA" y la fecha en la misma línea
                 doc.setFontSize(18);
@@ -739,7 +786,9 @@
                 doc.setFont(undefined, 'normal');
                 // Ajustar Y para que la línea base sea la misma (18px vs 12px, diferencia de ~3px en línea base)
                 const fechaY = titleY - (18 - 12) * 0.3; // Ajuste fino para alineación
-                doc.text(fechaTexto, titleX + rotativaWidth + 10, fechaY);
+                if (fechaTexto) {
+                    doc.text(fechaTexto, titleX + rotativaWidth + 10, fechaY);
+                }
                 
                 // Ajustar yPos para el contenido siguiente
                 yPos += Math.max(logoHeight, 20) + 10;
@@ -751,14 +800,8 @@
                 // Si la imagen no carga, continuar sin ella
                 const titleX = margin;
                 
-                // Fecha actual
-                const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 
-                              'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-                const fecha = new Date();
-                const dia = fecha.getDate();
-                const mes = meses[fecha.getMonth()];
-                const año = fecha.getFullYear();
-                const fechaTexto = `${dia} de ${mes} de ${año}`;
+                // Obtener fecha seleccionada
+                const fechaTexto = obtenerFechaSeleccionada();
                 
                 // Escribir "ROTATIVA" y la fecha en la misma línea
                 doc.setFontSize(18);
@@ -773,7 +816,9 @@
                 doc.setFont(undefined, 'normal');
                 // Ajustar Y para que la línea base sea la misma
                 const fechaY = yPos - (18 - 12) * 0.3; // Ajuste fino para alineación
-                doc.text(fechaTexto, titleX + rotativaWidth + 10, fechaY);
+                if (fechaTexto) {
+                    doc.text(fechaTexto, titleX + rotativaWidth + 10, fechaY);
+                }
                 
                 yPos += 20;
                 
