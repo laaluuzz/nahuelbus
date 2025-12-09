@@ -14,7 +14,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #dddddf 0%, #37343a 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -78,7 +78,7 @@
         .form-group input:focus,
         .form-group select:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #b5c3ff;
         }
 
         .btn {
@@ -137,7 +137,7 @@
         }
 
         .btn-download {
-            background: #007bff;
+            background: #6bb5ff;
             color: white;
             padding: 15px 30px;
             font-size: 1.1em;
@@ -154,14 +154,14 @@
         .no-sale-section {
             margin-top: 30px;
             padding: 20px;
-            background: #fff3cd;
+            background: #faf1ec;
             border-radius: 8px;
-            border: 2px solid #ffc107;
+            border: 2px solid #fffdf7;
             text-align: center;
         }
 
         .no-sale-section h2 {
-            color: #856404;
+            color: #020202;
             margin-bottom: 15px;
         }
 
@@ -176,7 +176,7 @@
 
         .no-sale-inputs input {
             padding: 8px;
-            border: 2px solid #ffc107;
+            border: 2px solid #000000;
             border-radius: 5px;
             width: 150px;
         }
@@ -190,8 +190,8 @@
         }
 
         .no-sale-item {
-            background: #ffc107;
-            color: #856404;
+            background: #fffefb;
+            color: #000000;
             padding: 8px 15px;
             border-radius: 5px;
             display: flex;
@@ -201,7 +201,7 @@
         }
 
         .no-sale-item .remove {
-            background: #856404;
+            background: lab(21.9% 0.88 0.31);
             color: white;
             border: none;
             border-radius: 50%;
@@ -437,7 +437,7 @@
             </div>
         </div>
 
-        <div class="no-sale-section" style="background: #d1ecf1; border-color: #0c5460;">
+        <div class="no-sale-section" style="background: #e3f2f5; border-color: #f8f8f8;">
             <h2 style="color: #0c5460;">📢 Avisos Del Día</h2>
             <div class="no-sale-inputs">
                 <input type="text" id="aviso-input" placeholder="Ingrese aviso del día" onkeypress="handleAvisoKeyPress(event)">
@@ -534,10 +534,41 @@
                     <label>Máquina</label>
                     <select class="maquina-input">
                         <option value="">Seleccione</option>
-                        <option value="33">33</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                        <option value="17">17</option>
+                        <option value="18">18</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="30">30</option>
                         <option value="31">31</option>
-                        <option value="28">28</option>
+                        <option value="32">32</option>
+                        <option value="33">33</option>
+                        <option value="35">35</option>
+                        <option value="36">36</option>
+                        <option value="39">39</option>
+                        <option value="40">40</option>
+                        <option value="41">41</option>
+                        <option value="44">44</option>
+                        <option value="47">47</option>
+                        <option value="48">48</option>
+                        <option value="49">49</option>
+                        <option value="51">51</option>
+                        <option value="52">52</option>
                         <option value="54">54</option>
+                        <option value="58">58</option>
+                        <option value="59">59</option>
+                        <option value="61">61</option>
+                        <option value="62">62</option>
+                        <option value="64">64</option>
+                        <option value="65">65</option>
+                        <option value="67">67</option>
+                        <option value="71">71</option>
+                        <option value="73">73</option>
+                        <option value="S/N">S/N</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -548,11 +579,11 @@
                     <label>Destino</label>
                     <select class="destino-input">
                         <option value="">Seleccione</option>
-                        <option value="Lebu">Lebu</option>
-                        <option value="Los Alamos">Los Alamos</option>
-                        <option value="Cañete">Cañete</option>
-                        <option value="Arauco">Arauco</option>
-                        <option value="Curanilahue">Curanilahue</option>
+                        <option value="ARAUCO">ARAUCO</option>
+                        <option value="CAÑETE">CAÑETE</option>
+                        <option value="CURANILAHUE">CURANILAHUE</option>
+                        <option value="LEBU">LEBU</option>
+                        <option value="LOS ÁLAMOS">LOS ÁLAMOS</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -563,10 +594,44 @@
                     <label>Conductor</label>
                     <select class="conductor-input">
                         <option value="">Seleccione</option>
-                        <option value="Juan Oñate">Juan Oñate</option>
-                        <option value="Erica Lagos">Erica Lagos</option>
-                        <option value="Carlos Peña">Carlos Peña</option>
-                        <option value="Guido Colileo">Guido Colileo</option>
+                        <option value="ADIEL JEREZ LAGOS">ADIEL JEREZ LAGOS</option>
+                        <option value="ARIEL TORO VEGA">ARIEL TORO VEGA</option>
+                        <option value="AUDITO ELIAS PIRUL PERALTA">AUDITO ELIAS PIRUL PERALTA</option>
+                        <option value="CARLOS JARA SAAVEDRA">CARLOS JARA SAAVEDRA</option>
+                        <option value="CARLOS PEÑA">CARLOS PEÑA</option>
+                        <option value="CESAR BAHAMONDES">CESAR BAHAMONDES</option>
+                        <option value="ELIECER MEDEL ARROYO">ELIECER MEDEL ARROYO</option>
+                        <option value="ERIKA LAGOS SAEZ">ERIKA LAGOS SAEZ</option>
+                        <option value="FABIAN LINCO RIQUELME">FABIAN LINCO RIQUELME</option>
+                        <option value="FRANCISCO JAVIER CASANOVA BRAVO">FRANCISCO JAVIER CASANOVA BRAVO</option>
+                        <option value="GERARDO OLAVE">GERARDO OLAVE</option>
+                        <option value="GONZALO ULLOA">GONZALO ULLOA</option>
+                        <option value="GUIDO COLILEO CISTERNAS">GUIDO COLILEO CISTERNAS</option>
+                        <option value="GUILLERMO ALLENDE QUEZADA">GUILLERMO ALLENDE QUEZADA</option>
+                        <option value="HERMAN VALDEBENITO">HERMAN VALDEBENITO</option>
+                        <option value="HOMERO NUÑEZ MENDEZ">HOMERO NUÑEZ MENDEZ</option>
+                        <option value="J.C. ORELLANA">J.C. ORELLANA</option>
+                        <option value="JORGE CASTRO">JORGE CASTRO</option>
+                        <option value="JORGE RODRIGUEZ ARAYA">JORGE RODRIGUEZ ARAYA</option>
+                        <option value="JOSE RIVAS SALAZAR">JOSE RIVAS SALAZAR</option>
+                        <option value="JUAN OÑATE FIGUEROA">JUAN OÑATE FIGUEROA</option>
+                        <option value="LUIS BAEZA JARAMILLO">LUIS BAEZA JARAMILLO</option>
+                        <option value="LUIS CANDIA HERNANDEZ">LUIS CANDIA HERNANDEZ</option>
+                        <option value="LUIS CAYUPE HIJO">LUIS CAYUPE HIJO</option>
+                        <option value="LUIS HOGADA BRAVO">LUIS HOGADA BRAVO</option>
+                        <option value="MARIO ANDRES">MARIO ANDRES</option>
+                        <option value="MARCELO NANCAVIL">MARCELO NANCAVIL</option>
+                        <option value="MARCELO ROJAS GUERRERO">MARCELO ROJAS GUERRERO</option>
+                        <option value="MIGUEL ANGEL MUÑOZ">MIGUEL ANGEL MUÑOZ</option>
+                        <option value="PABLO CHANDIA ARCE">PABLO CHANDIA ARCE</option>
+                        <option value="PATRICIO COLILEO CISTERNAS">PATRICIO COLILEO CISTERNAS</option>
+                        <option value="PATRICIO MORALES HERRERA">PATRICIO MORALES HERRERA</option>
+                        <option value="RAMON SALAS TAPIA">RAMON SALAS TAPIA</option>
+                        <option value="RENE FLORES HERERRA">RENE FLORES HERERRA</option>
+                        <option value="ROBERTO ALLENDE">ROBERTO ALLENDE</option>
+                        <option value="RODRIGO COLILEO">RODRIGO COLILEO</option>
+                        <option value="SEGUNDO CHAVEZ">SEGUNDO CHAVEZ</option>
+                        <option value="SIXTO GHERARDT CARRERO RIVERA">SIXTO GHERARDT CARRERO RIVERA</option>
                     </select>
                 </div>
                 <div class="move-buttons">
@@ -876,18 +941,58 @@
                     row.conductor
                 ];
                 
+                // Calcular la altura necesaria para esta fila basándose en el texto más largo
+                let maxLines = 1;
+                const lineHeight = 7;
+                const padding = 2;
+                
                 values.forEach((value, vIndex) => {
-                    doc.rect(xPos, yPos, colWidths[vIndex], 8);
-                    // Truncar texto si es muy largo
-                    let text = value || '';
-                    if (vIndex === 2 && text.length > 20) {
-                        text = text.substring(0, 17) + '...';
+                    if (value) {
+                        const text = value.toString();
+                        const maxWidth = colWidths[vIndex] - padding * 2;
+                        const lines = doc.splitTextToSize(text, maxWidth);
+                        maxLines = Math.max(maxLines, lines.length);
                     }
-                    doc.text(text, xPos + 2, yPos + 5);
+                });
+                
+                const rowHeight = maxLines * lineHeight;
+                
+                // Verificar si necesitamos una nueva página considerando la altura de la fila
+                if (yPos + rowHeight > pageHeight - margin) {
+                    doc.addPage();
+                    yPos = margin + 10;
+                    
+                    // Redibujar encabezados en nueva página
+                    xPos = startX;
+                    headers.forEach((header, hIndex) => {
+                        doc.setFont(undefined, 'bold');
+                        doc.rect(xPos, yPos, colWidths[hIndex], 8);
+                        doc.text(header, xPos + colWidths[hIndex] / 2, yPos + 5, { align: 'center' });
+                        xPos += colWidths[hIndex];
+                    });
+                    yPos += 8;
+                    doc.setFont(undefined, 'normal');
+                }
+                
+                // Dibujar las celdas con la altura calculada
+                xPos = startX;
+                values.forEach((value, vIndex) => {
+                    doc.rect(xPos, yPos, colWidths[vIndex], rowHeight);
+                    const text = value || '';
+                    const maxWidth = colWidths[vIndex] - padding * 2;
+                    const lines = doc.splitTextToSize(text, maxWidth);
+                    
+                    // Centrar verticalmente el texto en la celda
+                    const textStartY = yPos + (rowHeight / 2) - ((lines.length - 1) * lineHeight / 2);
+                    
+                    lines.forEach((line, lineIndex) => {
+                        doc.text(line, xPos + padding, textStartY + (lineIndex * lineHeight));
+                    });
+                    
                     xPos += colWidths[vIndex];
                 });
                 
-                yPos += 8;
+                yPos += rowHeight;
             });
             
             // Secciones "No Sale" y "Avisos Del Día" lado a lado
@@ -925,16 +1030,40 @@
             
             // Filas con las máquinas o mensaje "Sin máquinas"
             doc.setFont(undefined, 'normal');
+            const lineHeightNoSale = 7;
+            const paddingNoSale = 2;
+            
             if (noSaleMachines.length > 0) {
                 noSaleMachines.forEach(maquina => {
-                    doc.rect(startXNoSale, currentYNoSale, tableWidthNoSale, cellHeight);
-                    doc.text(maquina, startXNoSale + tableWidthNoSale / 2, currentYNoSale + 5, { align: 'center' });
-                    currentYNoSale += cellHeight;
+                    const maxWidth = tableWidthNoSale - paddingNoSale * 2;
+                    const lines = doc.splitTextToSize(maquina, maxWidth);
+                    const cellHeightNoSale = Math.max(cellHeight, lines.length * lineHeightNoSale);
+                    
+                    doc.rect(startXNoSale, currentYNoSale, tableWidthNoSale, cellHeightNoSale);
+                    
+                    // Centrar verticalmente el texto
+                    const textStartY = currentYNoSale + (cellHeightNoSale / 2) - ((lines.length - 1) * lineHeightNoSale / 2);
+                    lines.forEach((line, lineIndex) => {
+                        doc.text(line, startXNoSale + tableWidthNoSale / 2, textStartY + (lineIndex * lineHeightNoSale), { align: 'center' });
+                    });
+                    
+                    currentYNoSale += cellHeightNoSale;
                 });
             } else {
-                doc.rect(startXNoSale, currentYNoSale, tableWidthNoSale, cellHeight);
-                doc.text('Sin máquinas', startXNoSale + tableWidthNoSale / 2, currentYNoSale + 5, { align: 'center' });
-                currentYNoSale += cellHeight;
+                const sinMaquinasText = 'Sin máquinas';
+                const maxWidth = tableWidthNoSale - paddingNoSale * 2;
+                const lines = doc.splitTextToSize(sinMaquinasText, maxWidth);
+                const cellHeightNoSale = Math.max(cellHeight, lines.length * lineHeightNoSale);
+                
+                doc.rect(startXNoSale, currentYNoSale, tableWidthNoSale, cellHeightNoSale);
+                
+                // Centrar verticalmente el texto
+                const textStartY = currentYNoSale + (cellHeightNoSale / 2) - ((lines.length - 1) * lineHeightNoSale / 2);
+                lines.forEach((line, lineIndex) => {
+                    doc.text(line, startXNoSale + tableWidthNoSale / 2, textStartY + (lineIndex * lineHeightNoSale), { align: 'center' });
+                });
+                
+                currentYNoSale += cellHeightNoSale;
             }
             
             // Resetear Y para la segunda tabla
@@ -955,21 +1084,40 @@
             
             // Filas con los avisos o mensaje "Sin avisos del día"
             doc.setFont(undefined, 'normal');
+            const lineHeightAvisos = 7;
+            const paddingAvisos = 2;
+            
             if (avisosDelDia.length > 0) {
                 avisosDelDia.forEach(aviso => {
-                    doc.rect(startXAvisos, currentYAvisos, tableWidthAvisos, cellHeight);
-                    // Truncar texto si es muy largo
-                    let avisoText = aviso;
-                    if (avisoText.length > 20) {
-                        avisoText = avisoText.substring(0, 17) + '...';
-                    }
-                    doc.text(avisoText, startXAvisos + tableWidthAvisos / 2, currentYAvisos + 5, { align: 'center' });
-                    currentYAvisos += cellHeight;
+                    const maxWidth = tableWidthAvisos - paddingAvisos * 2;
+                    const lines = doc.splitTextToSize(aviso, maxWidth);
+                    const cellHeightAvisos = Math.max(cellHeight, lines.length * lineHeightAvisos);
+                    
+                    doc.rect(startXAvisos, currentYAvisos, tableWidthAvisos, cellHeightAvisos);
+                    
+                    // Centrar verticalmente el texto
+                    const textStartY = currentYAvisos + (cellHeightAvisos / 2) - ((lines.length - 1) * lineHeightAvisos / 2);
+                    lines.forEach((line, lineIndex) => {
+                        doc.text(line, startXAvisos + tableWidthAvisos / 2, textStartY + (lineIndex * lineHeightAvisos), { align: 'center' });
+                    });
+                    
+                    currentYAvisos += cellHeightAvisos;
                 });
             } else {
-                doc.rect(startXAvisos, currentYAvisos, tableWidthAvisos, cellHeight);
-                doc.text('Sin avisos del día', startXAvisos + tableWidthAvisos / 2, currentYAvisos + 5, { align: 'center' });
-                currentYAvisos += cellHeight;
+                const sinAvisosText = 'Sin avisos del día';
+                const maxWidth = tableWidthAvisos - paddingAvisos * 2;
+                const lines = doc.splitTextToSize(sinAvisosText, maxWidth);
+                const cellHeightAvisos = Math.max(cellHeight, lines.length * lineHeightAvisos);
+                
+                doc.rect(startXAvisos, currentYAvisos, tableWidthAvisos, cellHeightAvisos);
+                
+                // Centrar verticalmente el texto
+                const textStartY = currentYAvisos + (cellHeightAvisos / 2) - ((lines.length - 1) * lineHeightAvisos / 2);
+                lines.forEach((line, lineIndex) => {
+                    doc.text(line, startXAvisos + tableWidthAvisos / 2, textStartY + (lineIndex * lineHeightAvisos), { align: 'center' });
+                });
+                
+                currentYAvisos += cellHeightAvisos;
             }
             
             // Actualizar yPos al máximo de las dos tablas
