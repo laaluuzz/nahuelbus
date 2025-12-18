@@ -151,6 +151,21 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
+        .btn-clear {
+            background: #dc3545;
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            display: block;
+            margin: 30px auto;
+        }
+
+        .btn-clear:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
         .no-sale-section {
             margin-top: 30px;
             padding: 20px;
@@ -448,13 +463,307 @@
             </div>
         </div>
 
-        <button class="btn btn-download" onclick="downloadPDF()">📥 Descargar PDF</button>
+        <div style="display: flex; gap: 15px; justify-content: center; margin-top: 30px; flex-wrap: wrap;">
+            <button class="btn btn-download" onclick="downloadPDF()">📥 Descargar PDF</button>
+            <button class="btn btn-clear" onclick="limpiarDatosGuardados()">🗑️ Limpiar Datos Guardados</button>
+        </div>
     </div>
 
     <script>
         let formRowCount = 0;
         let noSaleMachines = [];
         let avisosDelDia = [];
+
+        // ========== FUNCIONES DE LOCALSTORAGE ==========
+        
+        // Guardar todos los datos en localStorage
+        function guardarDatos() {
+            try {
+                // Guardar filas del formulario
+                const formData = getAllFormData();
+                localStorage.setItem('nahuelbus_formData', JSON.stringify(formData));
+                
+                // Guardar contador de filas
+                localStorage.setItem('nahuelbus_formRowCount', formRowCount.toString());
+                
+                // Guardar máquinas que no salen
+                localStorage.setItem('nahuelbus_noSaleMachines', JSON.stringify(noSaleMachines));
+                
+                // Guardar avisos del día
+                localStorage.setItem('nahuelbus_avisosDelDia', JSON.stringify(avisosDelDia));
+                
+                // Guardar fecha seleccionada
+                const fechaData = {
+                    dia: document.getElementById('fecha-dia').value,
+                    mes: document.getElementById('fecha-mes').value,
+                    año: document.getElementById('fecha-año').value
+                };
+                localStorage.setItem('nahuelbus_fecha', JSON.stringify(fechaData));
+                
+                console.log('Datos guardados en localStorage');
+            } catch (error) {
+                console.error('Error al guardar datos:', error);
+            }
+        }
+
+        // Cargar todos los datos desde localStorage
+        function cargarDatos() {
+            try {
+                // Cargar fecha
+                const fechaData = localStorage.getItem('nahuelbus_fecha');
+                if (fechaData) {
+                    const fecha = JSON.parse(fechaData);
+                    if (fecha.dia) document.getElementById('fecha-dia').value = fecha.dia;
+                    if (fecha.mes) document.getElementById('fecha-mes').value = fecha.mes;
+                    if (fecha.año) document.getElementById('fecha-año').value = fecha.año;
+                }
+                
+                // Cargar máquinas que no salen
+                const noSaleData = localStorage.getItem('nahuelbus_noSaleMachines');
+                if (noSaleData) {
+                    noSaleMachines = JSON.parse(noSaleData);
+                    updateNoSaleList();
+                }
+                
+                // Cargar avisos del día
+                const avisosData = localStorage.getItem('nahuelbus_avisosDelDia');
+                if (avisosData) {
+                    avisosDelDia = JSON.parse(avisosData);
+                    updateAvisosList();
+                }
+                
+                // Cargar filas del formulario
+                const formDataStr = localStorage.getItem('nahuelbus_formData');
+                const formRowCountStr = localStorage.getItem('nahuelbus_formRowCount');
+                
+                if (formDataStr && formRowCountStr) {
+                    const formData = JSON.parse(formDataStr);
+                    formRowCount = parseInt(formRowCountStr) || 0;
+                    
+                    // Limpiar filas existentes
+                    const formRows = document.getElementById('form-rows');
+                    formRows.innerHTML = '';
+                    
+                    // Restaurar cada fila
+                    formData.forEach((rowData, index) => {
+                        formRowCount++;
+                        const row = document.createElement('div');
+                        row.className = 'form-row';
+                        row.id = `row-${formRowCount}`;
+                        
+                        row.innerHTML = `
+                            <div class="form-group">
+                                <label>Máquina</label>
+                                <select class="maquina-input">
+                                    <option value="">Seleccione</option>
+                                    <option value="12">12</option>
+                                    <option value="13">13</option>
+                                    <option value="14">14</option>
+                                    <option value="15">15</option>
+                                    <option value="16">16</option>
+                                    <option value="17">17</option>
+                                    <option value="18">18</option>
+                                    <option value="20">20</option>
+                                    <option value="21">21</option>
+                                    <option value="30">30</option>
+                                    <option value="31">31</option>
+                                    <option value="32">32</option>
+                                    <option value="33">33</option>
+                                    <option value="35">35</option>
+                                    <option value="36">36</option>
+                                    <option value="39">39</option>
+                                    <option value="40">40</option>
+                                    <option value="41">41</option>
+                                    <option value="44">44</option>
+                                    <option value="47">47</option>
+                                    <option value="48">48</option>
+                                    <option value="49">49</option>
+                                    <option value="51">51</option>
+                                    <option value="52">52</option>
+                                    <option value="54">54</option>
+                                    <option value="58">58</option>
+                                    <option value="59">59</option>
+                                    <option value="60">60</option>
+                                    <option value="61">61</option>
+                                    <option value="62">62</option>
+                                    <option value="64">64</option>
+                                    <option value="65">65</option>
+                                    <option value="67">67</option>
+                                    <option value="68">68</option>
+                                    <option value="71">71</option>
+                                    <option value="73">73</option>
+                                    <option value="S/N">S/N</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Hora</label>
+                                <input type="time" class="hora-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Destino</label>
+                                <select class="destino-input">
+                                    <option value="">Seleccione</option>
+                                    <option value="ARAUCO">ARAUCO</option>
+                                    <option value="CAÑETE">CAÑETE</option>
+                                    <option value="CURANILAHUE">CURANILAHUE</option>
+                                    <option value="LEBU">LEBU</option>
+                                    <option value="LOS ÁLAMOS">LOS ÁLAMOS</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Medio Día/Tarde</label>
+                                <input type="text" class="medio-input" placeholder="Ej: Mañana, Tarde">
+                            </div>
+                            <div class="form-group">
+                                <label>Conductor</label>
+                                <select class="conductor-input">
+                                    <option value="">Seleccione</option>
+                                    <option value="ADIEL JEREZ LAGOS">ADIEL JEREZ LAGOS</option>
+                                    <option value="ARIEL TORO VEGA">ARIEL TORO VEGA</option>
+                                    <option value="CARLOS JARA SAAVEDRA">CARLOS JARA SAAVEDRA</option>
+                                    <option value="CARLOS PEÑA">CARLOS PEÑA</option>
+                                    <option value="CARLOS PINO">CARLOS PINO</option>
+                                    <option value="CESAR BAHAMONDES">CESAR BAHAMONDES</option>
+                                    <option value="CRISTIAN FAUNDEZ">CRISTIAN FAUNDEZ</option>
+                                    <option value="ELIECER MEDEL ARROYO">ELIECER MEDEL ARROYO</option>
+                                    <option value="ERIKA LAGOS SAEZ">ERIKA LAGOS SAEZ</option>
+                                    <option value="FABIAN LINCO RIQUELME">FABIAN LINCO RIQUELME</option>
+                                    <option value="FRANCISCO JAVIER CASANOVA BRAVO">FRANCISCO JAVIER CASANOVA BRAVO</option>
+                                    <option value="GERARDO OLAVE">GERARDO OLAVE</option>
+                                    <option value="GONZALO ULLOA">GONZALO ULLOA</option>
+                                    <option value="GONZALO ULLOA JUNIOR">GONZALO ULLOA JUNIOR</option>
+                                    <option value="GUIDO COLILEO CISTERNAS">GUIDO COLILEO CISTERNAS</option>
+                                    <option value="GUILLERMO ALLENDE">GUILLERMO ALLENDE</option>
+                                    <option value="GUILLERMO ALLENDE QUEZADA">GUILLERMO ALLENDE QUEZADA</option>
+                                    <option value="HERMAN VALDEBENITO">HERMAN VALDEBENITO</option>
+                                    <option value="HOMERO NUÑEZ MENDEZ">HOMERO NUÑEZ MENDEZ</option>
+                                    <option value="J.C. ORELLANA">J.C. ORELLANA</option>
+                                    <option value="JORGE CASTRO">JORGE CASTRO</option>
+                                    <option value="JORGE RODRIGUEZ ARAYA">JORGE RODRIGUEZ ARAYA</option>
+                                    <option value="JOSE CASTRO">JOSE CASTRO</option>
+                                    <option value="JOSE RIVAS SALAZAR">JOSE RIVAS SALAZAR</option>
+                                    <option value="JUAN OÑATE FIGUEROA">JUAN OÑATE FIGUEROA</option>
+                                    <option value="LUIS BAEZA JARAMILLO">LUIS BAEZA JARAMILLO</option>
+                                    <option value="LUIS CANDIA HERNANDEZ">LUIS CANDIA HERNANDEZ</option>
+                                    <option value="LUIS CAYUPE HIJO">LUIS CAYUPE HIJO</option>
+                                    <option value="LUIS HOGADA BRAVO">LUIS HOGADA BRAVO</option>
+                                    <option value="MARIO ANDRES">MARIO ANDRES</option>
+                                    <option value="MARIO ANDRES GAETE">MARIO ANDRES GAETE</option>
+                                    <option value="MARCELO NANCAVIL">MARCELO NANCAVIL</option>
+                                    <option value="MARCELO ROJAS GUERRERO">MARCELO ROJAS GUERRERO</option>
+                                    <option value="MIGUEL ANGEL MUÑOZ">MIGUEL ANGEL MUÑOZ</option>
+                                    <option value="PABLO CHANDIA ARCE">PABLO CHANDIA ARCE</option>
+                                    <option value="PATRICIO COLILEO CISTERNAS">PATRICIO COLILEO CISTERNAS</option>
+                                    <option value="PATRICIO MORALES HERRERA">PATRICIO MORALES HERRERA</option>
+                                    <option value="RAMON SALAS TAPIA">RAMON SALAS TAPIA</option>
+                                    <option value="RENE FLORES HERERRA">RENE FLORES HERERRA</option>
+                                    <option value="ROBERTO ALLENDE">ROBERTO ALLENDE</option>
+                                    <option value="RODRIGO COLILEO">RODRIGO COLILEO</option>
+                                    <option value="SEGUNDO CHAVEZ">SEGUNDO CHAVEZ</option>
+                                    <option value="SIXTO GHERARDT CARRERO RIVERA">SIXTO GHERARDT CARRERO RIVERA</option>
+                                </select>
+                            </div>
+                            <div class="move-buttons">
+                                <button class="btn btn-move" onclick="moveRowUp(${formRowCount})" title="Mover arriba">↑</button>
+                                <button class="btn btn-move" onclick="moveRowDown(${formRowCount})" title="Mover abajo">↓</button>
+                            </div>
+                            <button class="btn btn-remove" onclick="removeRow(${formRowCount})">✕</button>
+                        `;
+                        
+                        formRows.appendChild(row);
+                        
+                        // Restaurar valores de la fila
+                        if (rowData.maquina) {
+                            const maquinaSelect = row.querySelector('.maquina-input');
+                            if (maquinaSelect) maquinaSelect.value = rowData.maquina;
+                        }
+                        if (rowData.hora) {
+                            const horaInput = row.querySelector('.hora-input');
+                            if (horaInput) horaInput.value = rowData.hora;
+                        }
+                        if (rowData.destino) {
+                            const destinoSelect = row.querySelector('.destino-input');
+                            if (destinoSelect) destinoSelect.value = rowData.destino;
+                        }
+                        if (rowData.medio) {
+                            const medioInput = row.querySelector('.medio-input');
+                            if (medioInput) medioInput.value = rowData.medio;
+                        }
+                        if (rowData.conductor) {
+                            const conductorSelect = row.querySelector('.conductor-input');
+                            if (conductorSelect) conductorSelect.value = rowData.conductor;
+                        }
+                    });
+                    
+                    updateMoveButtons();
+                    
+                    // Agregar event listeners para guardar automáticamente
+                    agregarEventListenersGuardado();
+                }
+                
+                console.log('Datos cargados desde localStorage');
+            } catch (error) {
+                console.error('Error al cargar datos:', error);
+            }
+        }
+
+        // Agregar event listeners para guardar automáticamente cuando cambie algo
+        function agregarEventListenersGuardado() {
+            // Guardar cuando cambien los inputs de las filas
+            document.querySelectorAll('.maquina-input, .hora-input, .destino-input, .medio-input, .conductor-input').forEach(input => {
+                // Solo agregar si no tiene el atributo data-listener (evitar duplicados)
+                if (!input.hasAttribute('data-listener-added')) {
+                    input.setAttribute('data-listener-added', 'true');
+                    input.addEventListener('change', guardarDatos);
+                    input.addEventListener('input', debounce(guardarDatos, 500)); // Guardar después de 500ms sin escribir
+                }
+            });
+            
+            // Guardar cuando cambie la fecha
+            const fechaDia = document.getElementById('fecha-dia');
+            const fechaMes = document.getElementById('fecha-mes');
+            const fechaAño = document.getElementById('fecha-año');
+            
+            if (fechaDia && !fechaDia.hasAttribute('data-listener-added')) {
+                fechaDia.setAttribute('data-listener-added', 'true');
+                fechaDia.addEventListener('change', guardarDatos);
+            }
+            if (fechaMes && !fechaMes.hasAttribute('data-listener-added')) {
+                fechaMes.setAttribute('data-listener-added', 'true');
+                fechaMes.addEventListener('change', guardarDatos);
+            }
+            if (fechaAño && !fechaAño.hasAttribute('data-listener-added')) {
+                fechaAño.setAttribute('data-listener-added', 'true');
+                fechaAño.addEventListener('change', guardarDatos);
+            }
+        }
+
+        // Función debounce para evitar guardar demasiado frecuentemente
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Función para limpiar todos los datos guardados
+        function limpiarDatosGuardados() {
+            if (confirm('¿Está seguro de que desea limpiar todos los datos guardados? Esta acción no se puede deshacer.')) {
+                localStorage.removeItem('nahuelbus_formData');
+                localStorage.removeItem('nahuelbus_formRowCount');
+                localStorage.removeItem('nahuelbus_noSaleMachines');
+                localStorage.removeItem('nahuelbus_avisosDelDia');
+                localStorage.removeItem('nahuelbus_fecha');
+                location.reload();
+            }
+        }
+
+        // ========== FIN FUNCIONES DE LOCALSTORAGE ==========
 
         // Función para obtener la fecha seleccionada
         function obtenerFechaSeleccionada() {
@@ -469,7 +778,7 @@
 
         // Función para actualizar la fecha (se usa cuando cambian los selects)
         function actualizarFecha() {
-            // La fecha se muestra directamente en los selects, no necesitamos actualizar nada
+            guardarDatos(); // Guardar cuando cambie la fecha
         }
 
         // Función para inicializar los selects de fecha
@@ -518,8 +827,19 @@
         // Agregar primera fila al cargar
         window.onload = function() {
             inicializarFecha();
-            addFormRow();
+            
+            // Intentar cargar datos guardados
+            cargarDatos();
+            
+            // Si no hay datos guardados, agregar una fila vacía
+            if (formRowCount === 0) {
+                addFormRow();
+            }
+            
             updateMoveButtons();
+            
+            // Agregar event listeners para guardado automático
+            agregarEventListenersGuardado();
         };
 
         function addFormRow() {
@@ -651,6 +971,17 @@
             
             formRows.appendChild(row);
             updateMoveButtons();
+            
+            // Agregar event listeners a los nuevos inputs
+            row.querySelectorAll('.maquina-input, .hora-input, .destino-input, .medio-input, .conductor-input').forEach(input => {
+                if (!input.hasAttribute('data-listener-added')) {
+                    input.setAttribute('data-listener-added', 'true');
+                    input.addEventListener('change', guardarDatos);
+                    input.addEventListener('input', debounce(guardarDatos, 500));
+                }
+            });
+            
+            guardarDatos(); // Guardar después de agregar fila
         }
 
         function removeRow(rowId) {
@@ -658,6 +989,7 @@
             if (row) {
                 row.remove();
                 updateMoveButtons();
+                guardarDatos(); // Guardar después de eliminar fila
             }
         }
 
@@ -669,6 +1001,7 @@
             if (previousRow && previousRow.classList.contains('form-row')) {
                 row.parentNode.insertBefore(row, previousRow);
                 updateMoveButtons();
+                guardarDatos(); // Guardar después de mover fila
             }
         }
 
@@ -680,6 +1013,7 @@
             if (nextRow && nextRow.classList.contains('form-row')) {
                 row.parentNode.insertBefore(nextRow, row);
                 updateMoveButtons();
+                guardarDatos(); // Guardar después de mover fila
             }
         }
 
@@ -718,6 +1052,7 @@
                 noSaleMachines.push(maquina);
                 input.value = '';
                 updateNoSaleList();
+                guardarDatos(); // Guardar después de agregar máquina
             }
         }
 
@@ -730,6 +1065,7 @@
         function removeNoSale(maquina) {
             noSaleMachines = noSaleMachines.filter(m => m !== maquina);
             updateNoSaleList();
+            guardarDatos(); // Guardar después de eliminar máquina
         }
 
         function updateNoSaleList() {
@@ -755,6 +1091,7 @@
                 avisosDelDia.push(aviso);
                 input.value = '';
                 updateAvisosList();
+                guardarDatos(); // Guardar después de agregar aviso
             }
         }
 
@@ -767,6 +1104,7 @@
         function removeAviso(aviso) {
             avisosDelDia = avisosDelDia.filter(a => a !== aviso);
             updateAvisosList();
+            guardarDatos(); // Guardar después de eliminar aviso
         }
 
         function updateAvisosList() {
